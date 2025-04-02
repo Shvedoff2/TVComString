@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVComString", "TVComString\TVComString.csproj", "{CE897585-3D7D-4E28-8811-4374BC47A182}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TVCOMStringInstaller", "TVCOMStringInstaller\TVCOMStringInstaller.vdproj", "{D1BE3010-15EA-47D2-8A49-BA6AE733955A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE897585-3D7D-4E28-8811-4374BC47A182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE897585-3D7D-4E28-8811-4374BC47A182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE897585-3D7D-4E28-8811-4374BC47A182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE897585-3D7D-4E28-8811-4374BC47A182}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1BE3010-15EA-47D2-8A49-BA6AE733955A}.Debug|Any CPU.ActiveCfg = Debug
+		{D1BE3010-15EA-47D2-8A49-BA6AE733955A}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7CAA0006-4A3E-45F4-9D4E-7F6F89208BCF}
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+EndGlobal
