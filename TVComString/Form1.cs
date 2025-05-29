@@ -12,15 +12,41 @@ namespace TVComString
 {
     public partial class Form1 : Form
     {
-        public string connStr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\TVCOMString\TVCOMNEWSTRING.MDF;Integrated Security=True;"; 
+        public string connStr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\TVCOMString\TVCOMNEWSTRING.MDF;Integrated Security=True;";
         public Form1()
         {
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
-            InitializeComponent();
-            LoadComboBoxData();
-            LoadTable();
-            filterRB1.Checked = true;
-            dateRB2.Checked = true;
+            try
+            {
+                System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+                InitializeComponent();
+                TestConnection();
+                LoadComboBoxData();
+                LoadTable();
+                filterRB1.Checked = true;
+                dateRB2.Checked = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка инициализации: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
+                               "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                File.WriteAllText(@"C:\TVCOMString\error.log",
+                                 $"{DateTime.Now}: {ex.Message}\n{ex.StackTrace}\n");
+            }
+        }
+        private void TestConnection()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    MessageBox.Show("Подключение к БД успешно!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка подключения к БД: {ex.Message}");
+            }
         }
 
         private void LoadComboBoxData()
