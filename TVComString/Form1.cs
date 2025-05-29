@@ -69,6 +69,7 @@ namespace TVComString
                 Properties.Settings.Default.Save();
             }
 
+
             string query = @"INSERT INTO [Объявления] 
     ([Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон]) 
     VALUES (@text, @zakaz, @dateOpen, @dateClose, @color, @phone)";
@@ -82,7 +83,14 @@ namespace TVComString
                     cmd.Parameters.AddWithValue("@zakaz", orderCB.Text);
                     cmd.Parameters.AddWithValue("@dateOpen", dateOpen.Value.Date);
                     cmd.Parameters.AddWithValue("@dateClose", dateClose.Value.Date);
-                    cmd.Parameters.AddWithValue("@color", string.IsNullOrEmpty(colorTB.Text) ? (object)DBNull.Value : colorTB.Text);
+                    if (colorTB.Text != "")
+                    {
+                        cmd.Parameters.AddWithValue("@color", colorTB.Text);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@color", "100,143,143,143");
+                    }
                     cmd.Parameters.AddWithValue("@phone", string.IsNullOrEmpty(phoneTB.Text) ? (object)DBNull.Value : phoneTB.Text);
 
                     cmd.ExecuteNonQuery();
@@ -90,6 +98,10 @@ namespace TVComString
                     LoadTable();
                 }
             }
+            obyavlenieTB.Text = "";
+            colorTB.Text = "";
+            orderCB.Text = "";
+            obyavlenieTB.Text = "";
         }
 
         private void colorBtn_Click(object sender, EventArgs e)
@@ -154,8 +166,17 @@ namespace TVComString
         {
             string datetext = Convert.ToString(DateTime.Now);
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string folderPath = Path.Combine(desktopPath, "Бегунки");
+
+            // Создаем папку, если она не существует
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
             string dateText = datetext.Replace(" ", "_").Replace(":", "_").Replace(".", "_");
-            string filePath = Path.Combine(desktopPath, $"begunok{dateText}.txt");
+            string filePath = Path.Combine(folderPath, $"{dateText}.txt");
+
             using (StreamWriter begunok = new StreamWriter(filePath, true))
             {
                 foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -166,12 +187,20 @@ namespace TVComString
                         string phone = row.Cells["PhoneColumn"].Value?.ToString() ?? "";
                         string color = row.Cells["ColorColumn"].Value?.ToString() ?? "";
 
-                        begunok.WriteLine($" {text}|{phone}<pb {color}>");
+                        if (phone == "")
+                        {
+                            begunok.WriteLine($" {text}");
+                        }
+                        else
+                        {
+                            begunok.WriteLine($" {text}|{phone}<pb {color}>");
+                        }
                     }
                 }
-                MessageBox.Show("Файл создан", "Успех");
+                MessageBox.Show("Успех", $"Файл создан в папке: {folderPath}");
             }
         }
+
 
         private void exportExcelButton_Click(object sender, EventArgs e)
         {
@@ -203,17 +232,25 @@ namespace TVComString
                 }
             }
 
-            // Сохраняем на рабочий стол
+            // Создаем папку "бегунки" на рабочем столе
             string datetext = Convert.ToString(DateTime.Now);
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string folderPath = Path.Combine(desktopPath, "Бегунки Excel");
+
+            // Создаем папку, если она не существует
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
             string dateText = datetext.Replace(" ", "_").Replace(":", "_").Replace(".", "_");
-            string filePath = Path.Combine(desktopPath, $"begunok{dateText}.xlsx");
+            string filePath = Path.Combine(folderPath, $"{dateText}.xlsx");
 
             workbook.SaveAs(filePath);
             workbook.Close();
             excelApp.Quit();
 
-            MessageBox.Show("Данные успешно экспортированы в Excel!", "Экспорт", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Экспорт", $"Данные успешно экспортированы в Excel!\nФайл сохранен в: {folderPath}", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void searchButton_Click(object sender, EventArgs e)
@@ -271,7 +308,5 @@ namespace TVComString
                 }
             }
         }
-
-
     }
 }
