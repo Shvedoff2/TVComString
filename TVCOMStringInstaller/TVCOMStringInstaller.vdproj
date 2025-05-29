@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_5D4F38FE553D447A901EB1827008B3BD"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_B3E39D59A214478BB5C8BFFBDA8C5B92"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -33,13 +27,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DE766E6233DD41C98D1EC2D9952785F6"
+        "MsmKey" = "8:_DF3E97A986424671ADFED4782D9834BF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_DF3E97A986424671ADFED4782D9834BF"
+        "MsmKey" = "8:_FE098AF975D04BE48935A4DEFB0F221F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -150,26 +144,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5D4F38FE553D447A901EB1827008B3BD"
-            {
-            "SourcePath" = "8:C:\\TVCOMString\\TVCOMNEWSTRING_log.ldf"
-            "TargetName" = "8:TVCOMNEWSTRING_log.ldf"
-            "Tag" = "8:"
-            "Folder" = "8:_14E79642FE8547CA803FE2932A10E0E4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B3E39D59A214478BB5C8BFFBDA8C5B92"
             {
             "SourcePath" = "8:..\\TVComString\\Resources\\logoIcon.ico"
@@ -221,9 +195,9 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE766E6233DD41C98D1EC2D9952785F6"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FE098AF975D04BE48935A4DEFB0F221F"
             {
-            "SourcePath" = "8:C:\\TVCOMString\\TVCOMNEWSTRING.mdf"
+            "SourcePath" = "8:C:\\TVCOMString\\clear_base\\TVCOMNEWSTRING.mdf"
             "TargetName" = "8:TVCOMNEWSTRING.mdf"
             "Tag" = "8:"
             "Folder" = "8:_14E79642FE8547CA803FE2932A10E0E4"

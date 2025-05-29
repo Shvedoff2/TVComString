@@ -35,13 +35,12 @@ namespace TVComString
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.addButton = new System.Windows.Forms.Button();
             this.obyavlenieTB = new System.Windows.Forms.TextBox();
             this.dateClose = new System.Windows.Forms.DateTimePicker();
             this.dateOpen = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
-            this.colorTB = new System.Windows.Forms.TextBox();
-            this.colorBtn = new System.Windows.Forms.Button();
             this.phoneTB = new System.Windows.Forms.TextBox();
             this.orderCB = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -70,6 +69,8 @@ namespace TVComString
             this.exportExcelButton = new System.Windows.Forms.Button();
             this.hideButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.colorTB = new System.Windows.Forms.TextBox();
+            this.colorBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -78,13 +79,14 @@ namespace TVComString
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.colorBtn);
+            this.groupBox1.Controls.Add(this.colorTB);
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.addButton);
             this.groupBox1.Controls.Add(this.obyavlenieTB);
             this.groupBox1.Controls.Add(this.dateClose);
             this.groupBox1.Controls.Add(this.dateOpen);
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.colorTB);
-            this.groupBox1.Controls.Add(this.colorBtn);
             this.groupBox1.Controls.Add(this.phoneTB);
             this.groupBox1.Controls.Add(this.orderCB);
             this.groupBox1.Controls.Add(this.label3);
@@ -96,6 +98,15 @@ namespace TVComString
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Добавить объявление";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(342, 16);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "Цвет";
             // 
             // addButton
             // 
@@ -137,23 +148,6 @@ namespace TVComString
             this.label4.Size = new System.Drawing.Size(85, 13);
             this.label4.TabIndex = 8;
             this.label4.Text = "Дата закрытия";
-            // 
-            // colorTB
-            // 
-            this.colorTB.Location = new System.Drawing.Point(405, 31);
-            this.colorTB.Name = "colorTB";
-            this.colorTB.Size = new System.Drawing.Size(109, 20);
-            this.colorTB.TabIndex = 7;
-            // 
-            // colorBtn
-            // 
-            this.colorBtn.Location = new System.Drawing.Point(328, 31);
-            this.colorBtn.Name = "colorBtn";
-            this.colorBtn.Size = new System.Drawing.Size(64, 20);
-            this.colorBtn.TabIndex = 6;
-            this.colorBtn.Text = "Цвет";
-            this.colorBtn.UseVisualStyleBackColor = true;
-            this.colorBtn.Click += new System.EventHandler(this.colorBtn_Click);
             // 
             // phoneTB
             // 
@@ -411,6 +405,23 @@ namespace TVComString
             this.hideButton.UseVisualStyleBackColor = true;
             this.hideButton.Click += new System.EventHandler(this.hideButton_Click);
             // 
+            // colorTB
+            // 
+            this.colorTB.Location = new System.Drawing.Point(345, 32);
+            this.colorTB.Name = "colorTB";
+            this.colorTB.Size = new System.Drawing.Size(100, 20);
+            this.colorTB.TabIndex = 15;
+            // 
+            // colorBtn
+            // 
+            this.colorBtn.Location = new System.Drawing.Point(345, 57);
+            this.colorBtn.Name = "colorBtn";
+            this.colorBtn.Size = new System.Drawing.Size(100, 23);
+            this.colorBtn.TabIndex = 16;
+            this.colorBtn.Text = "Изменить цвет";
+            this.colorBtn.UseVisualStyleBackColor = true;
+            this.colorBtn.Click += new System.EventHandler(this.colorBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -445,14 +456,12 @@ namespace TVComString
         private Label label3;
         private Label label2;
         private Label label1;
-        private Button colorBtn;
         private TextBox phoneTB;
         private Button addButton;
         private TextBox obyavlenieTB;
         private DateTimePicker dateClose;
         private DateTimePicker dateOpen;
         private Label label4;
-        private TextBox colorTB;
         private GroupBox groupBox2;
         private TextBox filterTB;
         private RadioButton filterRB2;
@@ -476,5 +485,8 @@ namespace TVComString
         private Button hideButton;
         private DateTimePicker dateFilter2;
         private ColorDialog colorDialog1;
+        private Label label5;
+        private TextBox colorTB;
+        private Button colorBtn;
     }
 }

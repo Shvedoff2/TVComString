@@ -26,10 +26,12 @@ namespace TVComString.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public global::System.Collections.Specialized.StringCollection Save {
-            get {
+            get
+            {
                 return ((global::System.Collections.Specialized.StringCollection)(this["Save"]));
             }
-            set {
+            set 
+            {
                 this["Save"] = value;
             }
         }

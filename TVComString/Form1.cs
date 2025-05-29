@@ -12,9 +12,10 @@ namespace TVComString
 {
     public partial class Form1 : Form
     {
-        public string connStr = @"Data Source=localhost\SQLEXPRESS;AttachDbFilename=C:\TVCOMString\TVCOMNEWSTRING.mdf;Integrated Security=True;";
+        public string connStr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\TVCOMString\TVCOMNEWSTRING.MDF;Integrated Security=True;"; 
         public Form1()
         {
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
             InitializeComponent();
             LoadComboBoxData();
             LoadTable();
@@ -88,7 +89,7 @@ namespace TVComString
                     MessageBox.Show("Успех", "объявление добавлено");
                     LoadTable();
                 }
-            }  
+            }
         }
 
         private void colorBtn_Click(object sender, EventArgs e)
@@ -135,7 +136,7 @@ namespace TVComString
                 dataGridView1.Location = new Point(10, 382);
                 dataGridView1.Height = 223;
             }
-            else 
+            else
             {
                 groupBox1.Visible = false;
                 hideButton.Location = new Point(10, 10);
@@ -155,7 +156,7 @@ namespace TVComString
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string dateText = datetext.Replace(" ", "_").Replace(":", "_").Replace(".", "_");
             string filePath = Path.Combine(desktopPath, $"begunok{dateText}.txt");
-            using (StreamWriter begunok = new StreamWriter(filePath, true)) 
+            using (StreamWriter begunok = new StreamWriter(filePath, true))
             {
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
@@ -168,7 +169,7 @@ namespace TVComString
                         begunok.WriteLine($" {text}|{phone}<pb {color}>");
                     }
                 }
-                MessageBox.Show("Файл создан","Успех");
+                MessageBox.Show("Файл создан", "Успех");
             }
         }
 
@@ -222,7 +223,7 @@ namespace TVComString
             {
                 query = $"SELECT [Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон] FROM [Объявления] WHERE '{dateFilter.Value.Year}-{dateFilter.Value.Month}-{dateFilter.Value.Day}' >= [дата_подачи] AND '{dateFilter.Value.Year}-{dateFilter.Value.Month}-{dateFilter.Value.Day}' <= [дата_закрытия]";
             }
-            else 
+            else
             {
                 if (filterRB1.Checked == true)
                 {
@@ -232,7 +233,7 @@ namespace TVComString
                 {
                     query += $" WHERE заказчик LIKE N'%{filterTB.Text}%'";
                 }
-                if (dateRB1.Checked == true) 
+                if (dateRB1.Checked == true)
                 {
                     query += $"AND [дата_подачи] BETWEEN '{dateFilter.Value.Year}-{dateFilter.Value.Month}-{dateFilter.Value.Day}' AND '{dateFilter2.Value.Year}-{dateFilter2.Value.Month}-{dateFilter2.Value.Day}'";
                 }
@@ -270,5 +271,7 @@ namespace TVComString
                 }
             }
         }
+
+
     }
 }
