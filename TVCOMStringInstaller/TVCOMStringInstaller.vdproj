@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_774AC7FBAF314BCCBABF5320FA74D720"
+        "MsmKey" = "8:_889E611374EF4A72AAFE9AC4B8DC667B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -144,9 +144,9 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_774AC7FBAF314BCCBABF5320FA74D720"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_889E611374EF4A72AAFE9AC4B8DC667B"
             {
-            "SourcePath" = "8:C:\\TVCOMString\\clear_base\\TVCOMNEWSTRING.mdf"
+            "SourcePath" = "8:C:\\TVCOMString\\TVCOMNEWSTRING.mdf"
             "TargetName" = "8:TVCOMNEWSTRING.mdf"
             "Tag" = "8:"
             "Folder" = "8:_14E79642FE8547CA803FE2932A10E0E4"
@@ -271,15 +271,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:TVCOMStringInstaller"
-        "ProductCode" = "8:{32B632FE-1F6C-44F3-AF21-B4FC8445DF82}"
-        "PackageCode" = "8:{261794DC-752B-4575-A3C6-1C4B1169AFCA}"
+        "ProductCode" = "8:{0F65B3A0-3BA6-442D-8450-71A22112BA11}"
+        "PackageCode" = "8:{494E48B0-B592-48A6-9792-F5E21D8F8B9D}"
         "UpgradeCode" = "8:{4C483304-0211-4989-B111-0A3EBEE41DF8}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.2.1"
+        "ProductVersion" = "8:1.2.5"
         "Manufacturer" = "8:TVCOM"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

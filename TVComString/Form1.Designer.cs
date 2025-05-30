@@ -35,6 +35,8 @@ namespace TVComString
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.colorBtn = new System.Windows.Forms.Button();
+            this.colorTB = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.addButton = new System.Windows.Forms.Button();
             this.obyavlenieTB = new System.Windows.Forms.TextBox();
@@ -58,19 +60,19 @@ namespace TVComString
             this.dateRB2 = new System.Windows.Forms.RadioButton();
             this.dateRB1 = new System.Windows.Forms.RadioButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.TextColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ZakazColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DateColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DateColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PhoneColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.searchButton = new System.Windows.Forms.Button();
             this.exportFileButton = new System.Windows.Forms.Button();
             this.exportExcelButton = new System.Windows.Forms.Button();
             this.hideButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.colorTB = new System.Windows.Forms.TextBox();
-            this.colorBtn = new System.Windows.Forms.Button();
+            this.deleteButton = new System.Windows.Forms.Button();
+            this.Текст_объявления = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Заказчик = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Дата_подачи = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Дата_закрытия = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Цвет = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Телефон = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Код_объявления = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -98,6 +100,23 @@ namespace TVComString
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Добавить объявление";
+            // 
+            // colorBtn
+            // 
+            this.colorBtn.Location = new System.Drawing.Point(345, 57);
+            this.colorBtn.Name = "colorBtn";
+            this.colorBtn.Size = new System.Drawing.Size(100, 23);
+            this.colorBtn.TabIndex = 16;
+            this.colorBtn.Text = "Изменить цвет";
+            this.colorBtn.UseVisualStyleBackColor = true;
+            this.colorBtn.Click += new System.EventHandler(this.colorBtn_Click);
+            // 
+            // colorTB
+            // 
+            this.colorTB.Location = new System.Drawing.Point(345, 32);
+            this.colorTB.Name = "colorTB";
+            this.colorTB.Size = new System.Drawing.Size(100, 20);
+            this.colorTB.TabIndex = 15;
             // 
             // label5
             // 
@@ -318,51 +337,21 @@ namespace TVComString
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.TextColumn,
-            this.ZakazColumn,
-            this.DateColumn1,
-            this.DateColumn2,
-            this.ColorColumn,
-            this.PhoneColumn});
+            this.Текст_объявления,
+            this.Заказчик,
+            this.Дата_подачи,
+            this.Дата_закрытия,
+            this.Цвет,
+            this.Телефон,
+            this.Код_объявления});
             this.dataGridView1.Location = new System.Drawing.Point(10, 382);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 25;
             this.dataGridView1.Size = new System.Drawing.Size(1064, 223);
             this.dataGridView1.TabIndex = 15;
-            // 
-            // TextColumn
-            // 
-            this.TextColumn.HeaderText = "Текст объявления";
-            this.TextColumn.Name = "TextColumn";
-            this.TextColumn.Width = 450;
-            // 
-            // ZakazColumn
-            // 
-            this.ZakazColumn.HeaderText = "Заказчик";
-            this.ZakazColumn.Name = "ZakazColumn";
-            this.ZakazColumn.Width = 150;
-            // 
-            // DateColumn1
-            // 
-            this.DateColumn1.HeaderText = "Дата подачи";
-            this.DateColumn1.Name = "DateColumn1";
-            // 
-            // DateColumn2
-            // 
-            this.DateColumn2.HeaderText = "Дата закрытия";
-            this.DateColumn2.Name = "DateColumn2";
-            // 
-            // ColorColumn
-            // 
-            this.ColorColumn.HeaderText = "Цвет";
-            this.ColorColumn.Name = "ColorColumn";
-            // 
-            // PhoneColumn
-            // 
-            this.PhoneColumn.HeaderText = "Телефон";
-            this.PhoneColumn.Name = "PhoneColumn";
             // 
             // searchButton
             // 
@@ -404,28 +393,59 @@ namespace TVComString
             this.hideButton.UseVisualStyleBackColor = true;
             this.hideButton.Click += new System.EventHandler(this.hideButton_Click);
             // 
-            // colorTB
+            // deleteButton
             // 
-            this.colorTB.Location = new System.Drawing.Point(345, 32);
-            this.colorTB.Name = "colorTB";
-            this.colorTB.Size = new System.Drawing.Size(100, 20);
-            this.colorTB.TabIndex = 15;
+            this.deleteButton.Location = new System.Drawing.Point(885, 356);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(189, 23);
+            this.deleteButton.TabIndex = 19;
+            this.deleteButton.Text = "Удалить выделенную строку";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
-            // colorBtn
+            // Текст_объявления
             // 
-            this.colorBtn.Location = new System.Drawing.Point(345, 57);
-            this.colorBtn.Name = "colorBtn";
-            this.colorBtn.Size = new System.Drawing.Size(100, 23);
-            this.colorBtn.TabIndex = 16;
-            this.colorBtn.Text = "Изменить цвет";
-            this.colorBtn.UseVisualStyleBackColor = true;
-            this.colorBtn.Click += new System.EventHandler(this.colorBtn_Click);
+            this.Текст_объявления.HeaderText = "Текст объявления";
+            this.Текст_объявления.Name = "Текст_объявления";
+            this.Текст_объявления.Width = 450;
+            // 
+            // Заказчик
+            // 
+            this.Заказчик.HeaderText = "Заказчик";
+            this.Заказчик.Name = "Заказчик";
+            this.Заказчик.Width = 150;
+            // 
+            // Дата_подачи
+            // 
+            this.Дата_подачи.HeaderText = "Дата подачи";
+            this.Дата_подачи.Name = "Дата_подачи";
+            // 
+            // Дата_закрытия
+            // 
+            this.Дата_закрытия.HeaderText = "Дата закрытия";
+            this.Дата_закрытия.Name = "Дата_закрытия";
+            // 
+            // Цвет
+            // 
+            this.Цвет.HeaderText = "Цвет";
+            this.Цвет.Name = "Цвет";
+            // 
+            // Телефон
+            // 
+            this.Телефон.HeaderText = "Телефон";
+            this.Телефон.Name = "Телефон";
+            // 
+            // Код_объявления
+            // 
+            this.Код_объявления.HeaderText = "Код_объявления";
+            this.Код_объявления.Name = "Код_объявления";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1086, 614);
+            this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.hideButton);
             this.Controls.Add(this.exportExcelButton);
             this.Controls.Add(this.exportFileButton);
@@ -475,17 +495,19 @@ namespace TVComString
         private Button searchButton;
         private Button exportFileButton;
         private Button exportExcelButton;
-        private DataGridViewTextBoxColumn TextColumn;
-        private DataGridViewTextBoxColumn ZakazColumn;
-        private DataGridViewTextBoxColumn DateColumn1;
-        private DataGridViewTextBoxColumn DateColumn2;
-        private DataGridViewTextBoxColumn ColorColumn;
-        private DataGridViewTextBoxColumn PhoneColumn;
         private Button hideButton;
         private DateTimePicker dateFilter2;
         private ColorDialog colorDialog1;
         private Label label5;
         private TextBox colorTB;
         private Button colorBtn;
+        private Button deleteButton;
+        private DataGridViewTextBoxColumn Текст_объявления;
+        private DataGridViewTextBoxColumn Заказчик;
+        private DataGridViewTextBoxColumn Дата_подачи;
+        private DataGridViewTextBoxColumn Дата_закрытия;
+        private DataGridViewTextBoxColumn Цвет;
+        private DataGridViewTextBoxColumn Телефон;
+        private DataGridViewTextBoxColumn Код_объявления;
     }
 }

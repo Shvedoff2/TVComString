@@ -13,6 +13,8 @@ namespace TVComString
     public partial class Form1 : Form
     {
         public string connStr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\TVCOMString\TVCOMNEWSTRING.MDF;Integrated Security=True;";
+        private bool isUpdating = false; // Флаг для предотвращения рекурсии
+
         public Form1()
         {
             try
@@ -24,6 +26,9 @@ namespace TVComString
                 LoadTable();
                 filterRB1.Checked = true;
                 dateRB2.Checked = true;
+
+                // Подключаем обработчики событий для автосохранения
+                SetupAutoSaveEvents();
             }
             catch (Exception ex)
             {
@@ -33,6 +38,127 @@ namespace TVComString
                                  $"{DateTime.Now}: {ex.Message}\n{ex.StackTrace}\n");
             }
         }
+
+        private void SetupAutoSaveEvents()
+        {
+            // Событие изменения значения ячейки
+            dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
+
+            // Событие завершения редактирования ячейки
+            dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
+        }
+
+        private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            // Игнорируем если это системное обновление или некорректный индекс
+            if (isUpdating || e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+            // Проверяем, что это не новая строка
+            if (row.IsNewRow) return;
+
+            AutoSaveRowChanges(row, e.RowIndex);
+        }
+
+        private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            // Дополнительная проверка при завершении редактирования
+            DataGridView1_CellValueChanged(sender, e);
+        }
+
+       
+
+        private void AutoSaveRowChanges(DataGridViewRow row, int rowIndex)
+        {
+            try
+            {
+                isUpdating = true;
+
+                // Получаем код объявления для идентификации записи
+                string codeValue = row.Cells["Код_объявления"].Value?.ToString();
+
+                if (string.IsNullOrEmpty(codeValue))
+                {
+                    MessageBox.Show("Не удалось определить код объявления для сохранения.", "Ошибка");
+                    return;
+                }
+
+                // Собираем данные из строки (используйте правильные имена столбцов)
+                string textValue = row.Cells["Текст_объявления"].Value?.ToString() ?? "";
+                string customerValue = row.Cells["Заказчик"].Value?.ToString() ?? "";
+                string phoneValue = row.Cells["Телефон"].Value?.ToString() ?? "";
+                string colorValue = row.Cells["Цвет"].Value?.ToString() ?? "";
+
+                // Обработка дат
+                DateTime dateOpen, dateClose;
+                if (!DateTime.TryParse(row.Cells["Дата_подачи"].Value?.ToString(), out dateOpen))
+                {
+                    MessageBox.Show("Некорректная дата подачи объявления.", "Ошибка");
+                    return;
+                }
+
+                if (!DateTime.TryParse(row.Cells["Дата_закрытия"].Value?.ToString(), out dateClose))
+                {
+                    MessageBox.Show("Некорректная дата закрытия объявления.", "Ошибка");
+                    return;
+                }
+
+                // Обновляем запись в базе данных
+                string updateQuery = @"UPDATE [Объявления] 
+                                     SET [Текст_объявления] = @text, 
+                                         [заказчик] = @customer, 
+                                         [дата_подачи] = @dateOpen, 
+                                         [дата_закрытия] = @dateClose, 
+                                         [цвет] = @color, 
+                                         [телефон] = @phone 
+                                     WHERE [Код_объявления] = @code";
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@text", textValue);
+                        cmd.Parameters.AddWithValue("@customer", customerValue);
+                        cmd.Parameters.AddWithValue("@dateOpen", dateOpen.Date);
+                        cmd.Parameters.AddWithValue("@dateClose", dateClose.Date);
+                        cmd.Parameters.AddWithValue("@color", string.IsNullOrEmpty(colorValue) ? "100,143,143,143" : colorValue);
+                        cmd.Parameters.AddWithValue("@phone", string.IsNullOrEmpty(phoneValue) ? (object)DBNull.Value : phoneValue);
+                        cmd.Parameters.AddWithValue("@code", codeValue);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            // Можно показать небольшое уведомление об успешном сохранении
+                            // MessageBox.Show("Изменения сохранены", "Автосохранение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Не удалось сохранить изменения.", "Ошибка");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка автосохранения: {ex.Message}", "Ошибка");
+
+                // Логируем ошибку
+                try
+                {
+                    File.AppendAllText(@"C:\TVCOMString\error.log",
+                                      $"{DateTime.Now}: Ошибка автосохранения - {ex.Message}\n{ex.StackTrace}\n");
+                }
+                catch { }
+            }
+            finally
+            {
+                isUpdating = false;
+            }
+        }
+
         private void TestConnection()
         {
             try
@@ -40,7 +166,7 @@ namespace TVComString
                 using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     conn.Open();
-                    MessageBox.Show("Подключение к БД успешно!");
+                    MessageBox.Show("Подключение к БД успешно! Версия 1.2.5");
                 }
             }
             catch (Exception ex)
@@ -58,7 +184,7 @@ namespace TVComString
         }
         private void LoadTable()
         {
-            string query = @"SELECT [Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон] FROM [Объявления] WHERE CAST(GETDATE() AS DATE) >= [дата_подачи] AND CAST(GETDATE() AS DATE) <= [дата_закрытия]";
+            string query = @"SELECT [Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон], [Код_объявления] FROM [Объявления] WHERE CAST(GETDATE() AS DATE) >= [дата_подачи] AND CAST(GETDATE() AS DATE) <= [дата_закрытия]";
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
@@ -79,7 +205,8 @@ namespace TVComString
                         Convert.ToDateTime(row["дата_подачи"]).ToShortDateString(),
                         Convert.ToDateTime(row["дата_закрытия"]).ToShortDateString(),
                         row["цвет"].ToString(),
-                        row["телефон"].ToString()
+                        row["телефон"].ToString(),
+                        row["Код_объявления"].ToString()
                     );
                 }
             }
@@ -128,6 +255,7 @@ namespace TVComString
             colorTB.Text = "";
             orderCB.Text = "";
             obyavlenieTB.Text = "";
+            phoneTB.Text = "";
         }
 
         private void colorBtn_Click(object sender, EventArgs e)
@@ -172,6 +300,7 @@ namespace TVComString
                 exportFileButton.Location = new Point(203, 356);
                 exportExcelButton.Location = new Point(403, 356);
                 dataGridView1.Location = new Point(10, 382);
+                deleteButton.Location = new Point(885, 356);
                 dataGridView1.Height = 223;
             }
             else
@@ -183,6 +312,7 @@ namespace TVComString
                 searchButton.Location = new Point(10, 132);
                 exportFileButton.Location = new Point(203, 132);
                 exportExcelButton.Location = new Point(403, 132);
+                deleteButton.Location = new Point(885, 132);
                 dataGridView1.Location = new Point(10, 158);
                 dataGridView1.Height = 447;
             }
@@ -209,9 +339,9 @@ namespace TVComString
                 {
                     if (!row.IsNewRow)
                     {
-                        string text = row.Cells["TextColumn"].Value?.ToString();
-                        string phone = row.Cells["PhoneColumn"].Value?.ToString() ?? "";
-                        string color = row.Cells["ColorColumn"].Value?.ToString() ?? "";
+                        string text = row.Cells["Текст_объявления"].Value?.ToString();
+                        string phone = row.Cells["Телефон"].Value?.ToString() ?? "";
+                        string color = row.Cells["Цвет"].Value?.ToString() ?? "";
 
                         if (phone == "")
                         {
@@ -219,6 +349,10 @@ namespace TVComString
                         }
                         else
                         {
+                            if (color == "")
+                            {
+                                color = "100,143,143,143";
+                            }
                             begunok.WriteLine($" {text}|{phone}<pb {color}>");
                         }
                     }
@@ -281,10 +415,10 @@ namespace TVComString
 
         private void searchButton_Click(object sender, EventArgs e)
         {
-            string query = "SELECT [Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон] FROM Объявления";
+            string query = "SELECT [Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон], [Код_объявления] FROM Объявления";
             if (filterTB.Text == "" && dateRB2.Checked == true)
             {
-                query = $"SELECT [Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон] FROM [Объявления] WHERE '{dateFilter.Value.Year}-{dateFilter.Value.Month}-{dateFilter.Value.Day}' >= [дата_подачи] AND '{dateFilter.Value.Year}-{dateFilter.Value.Month}-{dateFilter.Value.Day}' <= [дата_закрытия]";
+                query = $"SELECT [Текст_объявления], [заказчик], [дата_подачи], [дата_закрытия], [цвет], [телефон], [Код_объявления] FROM [Объявления] WHERE '{dateFilter.Value.Year}-{dateFilter.Value.Month}-{dateFilter.Value.Day}' >= [дата_подачи] AND '{dateFilter.Value.Year}-{dateFilter.Value.Month}-{dateFilter.Value.Day}' <= [дата_закрытия]";
             }
             else
             {
@@ -329,9 +463,96 @@ namespace TVComString
                         Convert.ToDateTime(row["дата_подачи"]).ToShortDateString(),
                         Convert.ToDateTime(row["дата_закрытия"]).ToShortDateString(),
                         row["цвет"].ToString(),
-                        row["телефон"].ToString()
+                        row["телефон"].ToString(),
+                        row["Код_объявления"].ToString()
                     );
                 }
+            }
+        }
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            // Проверяем, выделена ли строка
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Пожалуйста, выделите строку для удаления.", "Внимание",
+                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Получаем выделенную строку
+            DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
+
+            // Проверяем, что это не новая строка
+            if (selectedRow.IsNewRow)
+            {
+                MessageBox.Show("Нельзя удалить пустую строку.", "Внимание",
+                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Получаем код объявления для удаления из столбца "Код_объявления"
+            string codeValue = selectedRow.Cells["Код_объявления"].Value?.ToString();
+
+            if (string.IsNullOrEmpty(codeValue))
+            {
+                MessageBox.Show("Не удалось определить код объявления для удаления.", "Ошибка",
+                               MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Запрашиваем подтверждение удаления
+            string advertisementText = selectedRow.Cells["TextColumn"].Value?.ToString() ?? "Неизвестное объявление";
+            DialogResult result = MessageBox.Show(
+                $"Вы уверены, что хотите удалить объявление:\n\n\"{advertisementText}\"?",
+                "Подтверждение удаления",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            try
+            {
+                // Удаляем запись из базы данных
+                string deleteQuery = "DELETE FROM [Объявления] WHERE [Код_объявления] = @code";
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@code", codeValue);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Объявление успешно удалено.", "Успех",
+                                           MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            // Обновляем таблицу
+                            LoadTable();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Объявление не найдено в базе данных.", "Внимание",
+                                           MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении объявления: {ex.Message}", "Ошибка",
+                               MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // Логируем ошибку
+                try
+                {
+                    File.AppendAllText(@"C:\TVCOMString\error.log",
+                                      $"{DateTime.Now}: Ошибка удаления - {ex.Message}\n{ex.StackTrace}\n");
+                }
+                catch { }
             }
         }
     }
