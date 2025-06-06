@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -166,7 +167,7 @@ namespace TVComString
                 using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     conn.Open();
-                    MessageBox.Show("Подключение к БД успешно! Версия 1.2.5");
+                    MessageBox.Show("Подключение к БД успешно! Версия 1.2.7");
                 }
             }
             catch (Exception ex)
@@ -333,7 +334,10 @@ namespace TVComString
             string dateText = datetext.Replace(" ", "_").Replace(":", "_").Replace(".", "_");
             string filePath = Path.Combine(folderPath, $"{dateText}.txt");
 
-            using (StreamWriter begunok = new StreamWriter(filePath, true))
+            // Указываем кодировку ANSI (Windows-1251 для русского текста)
+            Encoding ansiEncoding = Encoding.GetEncoding(1251);
+
+            using (StreamWriter begunok = new StreamWriter(filePath, true, ansiEncoding))
             {
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
