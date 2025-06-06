@@ -167,7 +167,7 @@ namespace TVComString
                 using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     conn.Open();
-                    MessageBox.Show("Подключение к БД успешно! Версия 1.2.7");
+                    MessageBox.Show("Подключение к БД успешно! Версия 1.2.8");
                 }
             }
             catch (Exception ex)
@@ -377,7 +377,12 @@ namespace TVComString
 
             Excel.Workbook workbook = excelApp.Workbooks.Add();
             Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Sheets[1];
-
+            worksheet.Columns["A"].ColumnWidth = 100;
+            worksheet.Columns["B"].ColumnWidth = 12;
+            worksheet.Columns["C"].ColumnWidth = 13;
+            worksheet.Columns["D"].ColumnWidth = 14;
+            worksheet.Columns["E"].ColumnWidth = 14;
+            worksheet.Columns["F"].ColumnWidth = 20;
             // Заголовки
             for (int i = 0; i < dataGridView1.Columns.Count; i++)
             {
