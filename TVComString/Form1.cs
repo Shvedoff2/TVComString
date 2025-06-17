@@ -39,6 +39,21 @@ namespace TVComString
                                  $"{DateTime.Now}: {ex.Message}\n{ex.StackTrace}\n");
             }
         }
+        private void TestConnection()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    MessageBox.Show("Подключение к БД успешно! Версия 1.3.8");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка подключения к БД: {ex.Message}");
+            }
+        }
 
         private void SetupAutoSaveEvents()
         {
@@ -157,22 +172,6 @@ namespace TVComString
             finally
             {
                 isUpdating = false;
-            }
-        }
-
-        private void TestConnection()
-        {
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-                    MessageBox.Show("Подключение к БД успешно! Версия 1.2.8");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка подключения к БД: {ex.Message}");
             }
         }
 
@@ -325,7 +324,6 @@ namespace TVComString
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string folderPath = Path.Combine(desktopPath, "Бегунки");
 
-            // Создаем папку, если она не существует
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -334,7 +332,6 @@ namespace TVComString
             string dateText = datetext.Replace(" ", "_").Replace(":", "_").Replace(".", "_");
             string filePath = Path.Combine(folderPath, $"{dateText}.txt");
 
-            // Указываем кодировку ANSI (Windows-1251 для русского текста)
             Encoding ansiEncoding = Encoding.GetEncoding(1251);
 
             using (StreamWriter begunok = new StreamWriter(filePath, true, ansiEncoding))
@@ -343,26 +340,54 @@ namespace TVComString
                 {
                     if (!row.IsNewRow)
                     {
-                        string text = row.Cells["Текст_объявления"].Value?.ToString();
+                        string text = row.Cells["Текст_объявления"].Value?.ToString() ?? "";
                         string phone = row.Cells["Телефон"].Value?.ToString() ?? "";
                         string color = row.Cells["Цвет"].Value?.ToString() ?? "";
 
-                        if (phone == "")
+                        // Очистка текста от кавычек и переносов строк
+                        text = CleanText(text);
+                        text = text.Replace("\r", " ").Replace("\n", " ");
+                        phone = phone.Replace("\r", "").Replace("\n", "");
+                        color = color.Replace("\r", "").Replace("\n", "");
+
+                        if (string.IsNullOrWhiteSpace(phone))
                         {
                             begunok.WriteLine($" {text}");
                         }
                         else
                         {
-                            if (color == "")
+                            if (string.IsNullOrWhiteSpace(color))
                             {
                                 color = "100,143,143,143";
                             }
+
                             begunok.WriteLine($" {text}|{phone}<pb {color}>");
                         }
                     }
                 }
-                MessageBox.Show("Успех", $"Файл создан в папке: {folderPath}");
             }
+
+            MessageBox.Show("Успех", $"Файл создан в папке: {folderPath}");
+        }
+
+
+        // Метод для очистки текста от переносов строк и лишних пробелов
+        private string CleanText(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            // Удаляем все виды переносов строк и заменяем их пробелом
+            string cleaned = input.Replace("\r\n", " ")    // Windows перенос строки
+                                  .Replace("\n", " ")       // Unix перенос строки
+                                  .Replace("\r", " ")       // Mac перенос строки
+                                  .Replace("\t", " ");      // Табуляции
+
+            // Удаляем множественные пробелы и оставляем только одиночные
+            cleaned = System.Text.RegularExpressions.Regex.Replace(cleaned, @"\s+", " ");
+
+            // Убираем пробелы в начале и конце строки
+            return cleaned.Trim();
         }
 
 
@@ -377,12 +402,14 @@ namespace TVComString
 
             Excel.Workbook workbook = excelApp.Workbooks.Add();
             Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Sheets[1];
+
             worksheet.Columns["A"].ColumnWidth = 100;
             worksheet.Columns["B"].ColumnWidth = 12;
             worksheet.Columns["C"].ColumnWidth = 13;
             worksheet.Columns["D"].ColumnWidth = 14;
             worksheet.Columns["E"].ColumnWidth = 14;
             worksheet.Columns["F"].ColumnWidth = 20;
+
             // Заголовки
             for (int i = 0; i < dataGridView1.Columns.Count; i++)
             {
@@ -396,7 +423,27 @@ namespace TVComString
                 {
                     if (!dataGridView1.Rows[i].IsNewRow)
                     {
-                        worksheet.Cells[i + 2, j + 1] = dataGridView1.Rows[i].Cells[j].Value?.ToString();
+                        var cellValue = dataGridView1.Rows[i].Cells[j].Value;
+
+                        if (cellValue != null)
+                        {
+                            Excel.Range cell = worksheet.Cells[i + 2, j + 1];
+                            string stringValue = cellValue.ToString();
+                            stringValue = CleanQuotes(stringValue);
+
+                            // Удаляем переносы строк
+                            stringValue = stringValue.Replace("\r", " ").Replace("\n", " ");
+
+                            cell.Clear();
+                            cell.ClearFormats();
+
+                            cell.NumberFormat = "@";
+                            cell.WrapText = false;
+                            cell.ShrinkToFit = false;
+                            cell.Formula = "'" + stringValue;
+
+
+                        }
                     }
                 }
             }
@@ -406,7 +453,6 @@ namespace TVComString
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string folderPath = Path.Combine(desktopPath, "Бегунки Excel");
 
-            // Создаем папку, если она не существует
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -419,7 +465,33 @@ namespace TVComString
             workbook.Close();
             excelApp.Quit();
 
-            MessageBox.Show("Экспорт", $"Данные успешно экспортированы в Excel!\nФайл сохранен в: {folderPath}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Освобождение COM объектов
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(worksheet);
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
+            MessageBox.Show( $"Данные успешно экспортированы в Excel!\nФайл сохранен в: {folderPath}", "Экспорт",
+                           MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private string CleanQuotes(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            // Заменяем экранированные кавычки на обычные
+            string cleaned = input.Replace("\\\"", "\"");  // \" -> "
+
+            // Заменяем угловые кавычки на обычные
+            cleaned = cleaned.Replace("«", "\"");          // « -> "
+            cleaned = cleaned.Replace("»", "\"");          // » -> "
+        
+            cleaned = cleaned.Replace("„", "\"");          // „ -> "
+            cleaned = cleaned.Replace("‚", "'");           // ‚ -> '
+            cleaned = cleaned.Replace("'", "'");           // ' -> '
+            cleaned = cleaned.Replace("'", "'");           // ' -> '
+
+            return cleaned;
         }
 
         private void searchButton_Click(object sender, EventArgs e)
@@ -510,7 +582,7 @@ namespace TVComString
             }
 
             // Запрашиваем подтверждение удаления
-            string advertisementText = selectedRow.Cells["TextColumn"].Value?.ToString() ?? "Неизвестное объявление";
+            string advertisementText = selectedRow.Cells["Текст_объявления"].Value?.ToString() ?? "Неизвестное объявление";
             DialogResult result = MessageBox.Show(
                 $"Вы уверены, что хотите удалить объявление:\n\n\"{advertisementText}\"?",
                 "Подтверждение удаления",
